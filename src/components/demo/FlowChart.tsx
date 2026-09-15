@@ -331,7 +331,7 @@ export function FlowChart({
           <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-400">How to read it</p>
           <ul className="mt-2 space-y-1.5 text-[12.5px] text-ink-700">
             <li className="flex items-center gap-2"><svg width="26" height="14"><polygon points="5,1 21,1 25,7 21,13 5,13 1,7" className="fill-paper-0 stroke-ink-500" strokeWidth={1.5} /></svg>A check that can stop the flow</li>
-            <li className="flex items-center gap-2"><svg width="26" height="14"><rect x="1" y="1" width="24" height="12" rx="3" className="fill-paper-0 stroke-ink-500" strokeWidth={2.5} /></svg>The settlement commit — both legs or neither</li>
+            <li className="flex items-center gap-2"><svg width="26" height="14"><rect x="1" y="1" width="24" height="12" rx="3" className="fill-paper-0 stroke-ink-500" strokeWidth={2.5} /></svg>The settlement commit — both sides or neither</li>
             <li className="flex items-center gap-2"><svg width="26" height="14"><circle cx="13" cy="7" r="5" className="fill-blue-500" /></svg>Work moving between systems now</li>
             <li className="flex items-center gap-2"><svg width="26" height="14"><line x1="1" y1="7" x2="25" y2="7" className="stroke-amber-500" strokeWidth={2} strokeDasharray="4 3" /></svg>Reversal path when a check fails or is declined</li>
             <li className="text-ink-500">Lanes are the organisations involved; a line crossing lanes is a hand-off.</li>

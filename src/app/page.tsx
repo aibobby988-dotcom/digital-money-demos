@@ -34,7 +34,7 @@ const productSweep = [
   {
     product: "HSBC money-market funds — tokenised share class",
     fit: "Fund units against cash",
-    verdict: "Every corporate treasurer parks surplus cash in money-market funds, the pain recurs every weekend, and it can be delivered entirely inside HSBC: Asset Management runs the fund, Securities Services keeps the register, GPS provides the cash leg.",
+    verdict: "Every corporate treasurer parks surplus cash in money-market funds, the pain recurs every weekend, and it can be delivered entirely inside HSBC: Asset Management runs the fund, Securities Services keeps the register, GPS provides the payment side.",
     chosen: true,
   },
 ];
@@ -46,7 +46,7 @@ export default function Page() {
         <div className="mx-auto max-w-[1400px] px-5 py-10 sm:px-8">
           <p className="text-[12px] font-semibold uppercase tracking-wider text-brand-400">Concept demos · Digital Money</p>
           <h1 className="mt-3 max-w-4xl text-[30px] font-semibold leading-tight tracking-tight text-paper-0 sm:text-[38px]">
-            Putting the tokenised cash leg to work inside HSBC
+            Putting the tokenised payment side to work inside HSBC
           </h1>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-paper-200">
             The Tokenised Deposit Service already moves money 24/7. These two demos propose ways to make it more useful without
@@ -102,7 +102,7 @@ export default function Page() {
 
           <div className="rounded-2xl border border-paper-200 bg-paper-0 p-5">
             <p className="text-[14px] font-semibold text-charcoal-900">Which HSBC product — and why not Orion</p>
-            <p className="mt-1 text-[13px] text-ink-500">A sweep of HSBC assets that could settle against the tokenised cash leg.</p>
+            <p className="mt-1 text-[13px] text-ink-500">A sweep of HSBC assets that could settle against the tokenised payment side.</p>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full min-w-[720px] border-collapse text-left">
                 <thead>
@@ -135,7 +135,7 @@ export default function Page() {
               <p className="text-[14px] font-semibold text-charcoal-900">What HSBC already has</p>
               <ul className="mt-2.5 space-y-2.5 text-[13px] leading-relaxed text-ink-700">
                 <li>
-                  The Tokenised Deposit Service — a 24/7 tokenised cash leg, live in six markets.{" "}
+                  The Tokenised Deposit Service — a 24/7 tokenised payment side, live in six markets.{" "}
                   <Source href="https://www.about.us.hsbc.com/newsroom/press-releases/hsbc-expands-tokenized-deposit-service-to-the-united-states">HSBC</Source>
                 </li>
                 <li>
@@ -157,12 +157,12 @@ export default function Page() {
             <div className="rounded-2xl border border-brand-100 bg-brand-50 p-5">
               <p className="text-[14px] font-semibold text-charcoal-900">What is new</p>
               <p className="mt-2.5 text-[13px] leading-relaxed text-ink-700">
-                Joining the pieces. The cash leg, the registrar capability and the funds exist separately; a treasurer on TDS cannot
+                Joining the pieces. The payment side, the registrar capability and the funds exist separately; a treasurer on TDS cannot
                 yet buy or sell an HSBC fund atomically, out of hours, with no settlement gap. This demo is that join — delivered
                 entirely inside HSBC, with no external platform in the path.
               </p>
               <p className="mt-2.5 text-[13px] leading-relaxed text-ink-700">
-                It also rehearses the harder, larger prize: once the join works for HSBC&apos;s own funds, the same cash leg can serve
+                It also rehearses the harder, larger prize: once the join works for HSBC&apos;s own funds, the same payment side can serve
                 third-party funds on shared networks.
               </p>
             </div>

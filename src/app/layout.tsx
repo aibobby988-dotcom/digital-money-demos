@@ -6,7 +6,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const jetbrainsMono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Tokenised Cash Leg — Two Demos",
+  title: "Tokenised Payment Side — Two Demos",
   description:
     "Concept demos: settling HSBC money-market fund units against tokenised deposits, and automated cash pooling on a 24/7 tokenised rail.",
 };

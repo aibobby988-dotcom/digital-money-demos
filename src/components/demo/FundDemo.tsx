@@ -16,9 +16,9 @@ const systems: SystemDef[] = [
   { id: "screen", name: "Financial crime screening", owner: "Controls", role: "Sanctions, AML and PEP checks before value moves" },
   { id: "oms", name: "Fund order management", owner: "HSBC Asset Management", role: "Investor eligibility, dealing rules, concentration limits" },
   { id: "nav", name: "NAV & pricing", owner: "HSBC Asset Management", role: "Strikes the unit price the order settles at" },
-  { id: "registry", name: "Transfer agent & unit register", owner: "HSBC Securities Services", role: "Issues, reserves and cancels fund units — the asset leg" },
-  { id: "tds", name: "TDS ledger", owner: "GPS · Digital Money", role: "Tokenised deposits: escrow and transfer — the cash leg" },
-  { id: "settle", name: "Atomic settlement engine", owner: "GPS · Digital Money", role: "Commits both legs together, or neither" },
+  { id: "registry", name: "Transfer agent & unit register", owner: "HSBC Securities Services", role: "Issues, reserves and cancels fund units — the fund side" },
+  { id: "tds", name: "TDS ledger", owner: "GPS · Digital Money", role: "Tokenised deposits: escrow and transfer — the payment side" },
+  { id: "settle", name: "Atomic settlement engine", owner: "GPS · Digital Money", role: "Commits both sides together, or neither" },
   { id: "core", name: "Core banking & general ledger", owner: "Books of record", role: "Deposit accounts and accounting entries" },
   { id: "recon", name: "Reconciliation, audit & cases", owner: "Books of record", role: "Ledger, core and register must agree; exceptions get an owner" },
 ];
@@ -47,9 +47,9 @@ function subscribeStages(amount: number): StageDef[] {
     { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Investing entity, fund and counterparties screened — clear", clientSays: "Running standard security and compliance checks." },
     { id: "eligibility", shape: "decision", label: "Investor eligibility & dealing rules", systemIds: ["oms"], milestone: 2, detail: "Professional-investor class; within per-investor concentration limit; class permits 24/7 dealing", clientSays: "Checking the fund's rules for this order." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `Constant-NAV class at US$1.0000 per unit → ${units(amount)} units`, clientSays: `Price confirmed: ${units(amount)} units at US$1.0000.` },
-    { id: "cashlock", label: "Cash leg locked in escrow", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of tokenised deposits moved to settlement escrow — not yet released to the fund`, clientSays: `${usd(amount)} is held for settlement. It stays yours until the units are ready.` },
-    { id: "assetreserve", label: "Asset leg reserved in register", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units reserved for issue to Meridian Holdings (HK)`, clientSays: "Reserving your fund units." },
-    { id: "commit", shape: "commit", joinsFrom: ["cashlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: cash released to the fund's account and units issued to the investor — both legs or neither", clientSays: "Exchanging cash for units in a single step." },
+    { id: "cashlock", label: "Payment side locked in escrow", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of tokenised deposits moved to settlement escrow — not yet released to the fund`, clientSays: `${usd(amount)} is held for settlement. It stays yours until the units are ready.` },
+    { id: "assetreserve", label: "Fund side reserved in register", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units reserved for issue to Meridian Holdings (HK)`, clientSays: "Reserving your fund units." },
+    { id: "commit", shape: "commit", joinsFrom: ["cashlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: cash released to the fund's account and units issued to the investor — both sides or neither", clientSays: "Exchanging cash for units in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the trade in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; ERP updated by API callback", clientSays: "Sending your confirmation." },
   ];
@@ -62,9 +62,9 @@ function redeemStages(amount: number): StageDef[] {
     { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Redeeming entity and destination wallet screened — clear", clientSays: "Running standard security and compliance checks." },
     { id: "dealing", shape: "decision", label: "Dealing rules & fund liquidity", systemIds: ["oms"], milestone: 2, detail: "Redemption within the fund's daily liquidity buffer; no gate or fee triggered", clientSays: "Checking the fund's rules for this redemption." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `US$1.0000 per unit → proceeds ${usd(amount)}`, clientSays: `Proceeds confirmed: ${usd(amount)}.` },
-    { id: "assetlock", label: "Asset leg locked in escrow", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units moved to settlement escrow in the register`, clientSays: "Your units are held for settlement." },
-    { id: "cashreserve", label: "Cash leg reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of the fund's tokenised deposits reserved for payment`, clientSays: "Reserving your proceeds." },
-    { id: "commit", shape: "commit", joinsFrom: ["assetlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: units cancelled and cash paid to the investor's wallet — both legs or neither", clientSays: "Exchanging units for cash in a single step." },
+    { id: "assetlock", label: "Fund side locked in escrow", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units moved to settlement escrow in the register`, clientSays: "Your units are held for settlement." },
+    { id: "cashreserve", label: "Payment side reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of the fund's tokenised deposits reserved for payment`, clientSays: "Reserving your proceeds." },
+    { id: "commit", shape: "commit", joinsFrom: ["assetlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: units cancelled and cash paid to the investor's wallet — both sides or neither", clientSays: "Exchanging units for cash in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the redemption in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; proceeds available to sweep immediately", clientSays: "Sending your confirmation." },
   ];
@@ -119,7 +119,7 @@ const scenarios: FundScenario[] = [
     failDetail:
       "Transfer agent cannot issue units: investor due-diligence on the register is incomplete for Meridian Holdings (HK). No units reserved.",
     reversal: [
-      { label: "Cash leg released from escrow", systemIds: ["tds", "settle"], detail: "US$50,000,000 returned to Meridian's tokenised deposit wallet — value never left the client" },
+      { label: "Payment side released from escrow", systemIds: ["tds", "settle"], detail: "US$50,000,000 returned to Meridian's tokenised deposit wallet — value never left the client" },
       { label: "Exception case opened", systemIds: ["recon"], detail: "Owned by Securities Services onboarding; client told what is needed, not which check fired" },
     ],
     conventional:

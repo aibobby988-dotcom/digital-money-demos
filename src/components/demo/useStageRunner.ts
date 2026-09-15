@@ -22,9 +22,9 @@ export interface StageDef {
   /** Plain-language line the client sees while this stage is running. */
   clientSays: string;
   ms?: number;
-  /** Flow-chart shape: a check that can stop the flow, or the point both legs settle. */
+  /** Flow-chart shape: a check that can stop the flow, or the point both sides settle. */
   shape?: "decision" | "commit";
-  /** Extra incoming edges in the flow chart, e.g. both settlement legs joining the commit. */
+  /** Extra incoming edges in the flow chart, e.g. both settlement sides joining the commit. */
   joinsFrom?: string[];
 }
 
