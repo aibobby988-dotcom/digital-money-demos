@@ -48,7 +48,7 @@ function subscribeStages(amount: number): StageDef[] {
     { id: "eligibility", shape: "decision", label: "Investor eligibility & dealing rules", systemIds: ["oms"], milestone: 2, detail: "Professional-investor class; within per-investor concentration limit; class permits 24/7 dealing", clientSays: "Checking the fund's rules for this order." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `Constant-NAV class at US$1.0000 per unit → ${units(amount)} units`, clientSays: `Price confirmed: ${units(amount)} units at US$1.0000.` },
     { id: "cashlock", label: "Payment side locked in escrow", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of tokenised deposits moved to settlement escrow — not yet released to the fund`, clientSays: `${usd(amount)} is held for settlement. It stays yours until the units are ready.` },
-    { id: "assetreserve", label: "Fund side reserved in register", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units reserved for issue to Meridian Holdings (HK)`, clientSays: "Reserving your fund units." },
+    { id: "assetreserve", label: "Fund side reserved in register", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units reserved for issue to Party A Holdings (HK)`, clientSays: "Reserving your fund units." },
     { id: "commit", shape: "commit", joinsFrom: ["cashlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: cash released to the fund's account and units issued to the investor — both sides or neither", clientSays: "Exchanging cash for units in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the trade in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; ERP updated by API callback", clientSays: "Sending your confirmation." },
@@ -117,9 +117,9 @@ const scenarios: FundScenario[] = [
     exception: true,
     failAt: "assetreserve",
     failDetail:
-      "Transfer agent cannot issue units: investor due-diligence on the register is incomplete for Meridian Holdings (HK). No units reserved.",
+      "Transfer agent cannot issue units: investor due-diligence on the register is incomplete for Party A Holdings (HK). No units reserved.",
     reversal: [
-      { label: "Payment side released from escrow", systemIds: ["tds", "settle"], detail: "US$50,000,000 returned to Meridian's tokenised deposit wallet — value never left the client" },
+      { label: "Payment side released from escrow", systemIds: ["tds", "settle"], detail: "US$50,000,000 returned to Party A's tokenised deposit wallet — value never left the client" },
       { label: "Exception case opened", systemIds: ["recon"], detail: "Owned by Securities Services onboarding; client told what is needed, not which check fired" },
     ],
     conventional:
@@ -229,7 +229,7 @@ export function FundDemo() {
           <div className="rounded-xl border border-paper-200 bg-paper-0 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[14px] font-semibold text-charcoal-900">Meridian Holdings (HK)</p>
+                <p className="text-[14px] font-semibold text-charcoal-900">Party A Holdings (HK)</p>
                 <p className="text-[12px] text-ink-500">Group treasury</p>
               </div>
               <div className="flex items-center gap-1.5 text-[12px] text-ink-500">

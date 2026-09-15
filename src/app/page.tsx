@@ -91,7 +91,7 @@ export default function Page() {
               A treasurer&apos;s idle cash, invested on a Friday night and back in time for Monday&apos;s payroll
             </h2>
             <p className="mt-3 text-[14.5px] leading-relaxed text-ink-700">
-              At 18:40 on a Friday, Meridian&apos;s Hong Kong treasury has US$50m that will sit idle all weekend. Today the fund&apos;s
+              At 18:40 on a Friday, Party A&apos;s Hong Kong treasury has US$50m that will sit idle all weekend. Today the fund&apos;s
               dealing cut-off has passed, so the cash earns nothing until Monday. With a tokenised share class settled against
               tokenised deposits, the order settles in seconds as a single exchange of cash for units — and on Sunday night the
               treasurer can redeem to fund Singapore&apos;s payroll before Asia opens.

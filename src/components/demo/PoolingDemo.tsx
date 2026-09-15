@@ -83,7 +83,7 @@ const scenarios: PoolScenario[] = [
     sweptBefore: 0,
     clockStart: { h: 2, m: 15, label: "Mon 14 Sep" },
     stages: stages({
-      entity: "Meridian Singapore",
+      entity: "Party A Singapore",
       code: "SG",
       cause: "Singapore payroll batch of US$1,770,000 debited",
       lowBalance: 380_000,
@@ -107,11 +107,11 @@ const scenarios: PoolScenario[] = [
     approvedDetail:
       "Checker TRS-022 approved a one-off exception from HSBCnet mobile — recorded separately from automated activity.",
     reversal: [
-      { label: "Funding requirement cancelled", systemIds: ["policy", "limits"], detail: "Nothing reserved or moved; Meridian UK stays at US$410,000 and the alert stays open for the morning" },
+      { label: "Funding requirement cancelled", systemIds: ["policy", "limits"], detail: "Nothing reserved or moved; Party A UK stays at US$410,000 and the alert stays open for the morning" },
       { label: "Decision recorded", systemIds: ["cases"], detail: "Checker's decline retained on the case for audit and the next policy review" },
     ],
     stages: stages({
-      entity: "Meridian UK",
+      entity: "Party A UK",
       code: "UK",
       cause: "Bond coupon of US$1,590,000 paid",
       lowBalance: 410_000,
@@ -148,9 +148,9 @@ export function PoolingDemo() {
   const feed = sc ? sc.stages.filter((_, i) => statuses[i] === "done").map((s) => s.clientSays) : [];
 
   const entities = [
-    { key: "hk" as const, name: "Meridian Holdings", place: "Hong Kong · hub" },
-    { key: "sg" as const, name: "Meridian Singapore", place: "Singapore" },
-    { key: "uk" as const, name: "Meridian UK", place: "United Kingdom" },
+    { key: "hk" as const, name: "Party A Holdings", place: "Hong Kong · hub" },
+    { key: "sg" as const, name: "Party A Singapore", place: "Singapore" },
+    { key: "uk" as const, name: "Party A UK", place: "United Kingdom" },
   ];
 
   const running = phase === "running";
@@ -220,7 +220,7 @@ export function PoolingDemo() {
           <div className="rounded-xl border border-paper-200 bg-paper-0 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[14px] font-semibold text-charcoal-900">Meridian Group · automated pooling</p>
+                <p className="text-[14px] font-semibold text-charcoal-900">Party A Group · automated pooling</p>
                 <p className="text-[12px] text-ink-500">
                   Floor {usd(POLICY.floor)} · top up to {usd(POLICY.target)} · daily cap {usd(POLICY.cap)}
                 </p>
@@ -281,7 +281,7 @@ export function PoolingDemo() {
                 Approval needed · push notification sent to checker
               </p>
               <p className="mt-1 text-[12.5px] leading-relaxed text-charcoal-900">
-                Topping up Meridian UK by {usd(sc.amount)} would take today&apos;s automated sweeps to{" "}
+                Topping up Party A UK by {usd(sc.amount)} would take today&apos;s automated sweeps to{" "}
                 {usd(sc.sweptBefore + sc.amount)}, above your {usd(POLICY.cap)} cap. Nothing has moved. Approve a one-off exception?
               </p>
               <p className="mt-1 text-[11px] text-ink-500">Signed in as checker TRS-022</p>
@@ -315,7 +315,7 @@ export function PoolingDemo() {
             <div className="mt-3 rounded-xl border border-rose-500 bg-rose-100 p-3.5">
               <p className="text-[13px] font-semibold text-charcoal-900">Declined — nothing moved</p>
               <p className="mt-1 text-[12.5px] leading-relaxed text-charcoal-900">
-                Meridian UK stays below its floor and the alert stays open for your team this morning. Your decision is recorded.
+                Party A UK stays below its floor and the alert stays open for your team this morning. Your decision is recorded.
               </p>
             </div>
           )}
