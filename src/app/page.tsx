@@ -49,9 +49,7 @@ export default function Page() {
             Putting the tokenised payment side to work inside HSBC
           </h1>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-paper-200">
-            The Tokenised Deposit Service already moves money 24/7. These two demos propose ways to make it more useful without
-            building a new platform: settle HSBC&apos;s own investment products against it, and let money move by policy rather
-            than by instruction.
+            The Tokenised Deposit Service already moves money 24/7. These two demos propose ways to make it more useful.
           </p>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <a href="#demo-1" className="group rounded-xl border border-charcoal-700 bg-charcoal-900 p-4 hover:border-brand-500">
