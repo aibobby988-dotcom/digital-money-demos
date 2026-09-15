@@ -84,6 +84,18 @@ interface FundScenario extends Scenario {
 
 const scenarios: FundScenario[] = [
   {
+    key: "subscribe",
+    title: "Friday afternoon — invest before the cut-off time",
+    when: "Fri 11 Sep · 16:40 HKT",
+    kind: "subscribe",
+    amount: 50_000_000,
+    start: { cash: 62_400_000, units: 0 },
+    clockStart: { h: 16, m: 40, label: "Fri 11 Sep" },
+    stages: subscribeStages(50_000_000),
+    conventional:
+      "Conventional share class: an order before the 17:00 cut-off still deals today, but cash leaves by payment instruction and units are confirmed on the register later — a gap where the money has gone and the units are not yet there. Here both move in one step.",
+  },
+  {
     key: "redeem",
     title: "Sunday night — raise cash for Monday payroll",
     when: "Sun 13 Sep · 23:10 HKT",
@@ -96,25 +108,13 @@ const scenarios: FundScenario[] = [
       "Conventional share class: a Sunday instruction waits for Monday's dealing cycle. So a treasurer who might need cash out of hours keeps a buffer like this US$50m as a low-yielding deposit instead — about US$16k of yield forgone per weekend at an illustrative 4%.",
   },
   {
-    key: "subscribe",
-    title: "Friday evening — invest after the cut-off",
-    when: "Fri 11 Sep · 18:40 HKT",
-    kind: "subscribe",
-    amount: 50_000_000,
-    start: { cash: 62_400_000, units: 0 },
-    clockStart: { h: 18, m: 40, label: "Fri 11 Sep" },
-    stages: subscribeStages(50_000_000),
-    conventional:
-      "Conventional share class: the order sits pending until Monday's dealing cycle. Settling tonight does not add weekend yield — the fund cannot invest until markets open — but the treasurer ends the week with the position done, not a Monday cut-off to chase.",
-  },
-  {
     key: "exception",
     title: "Exception — units cannot be issued",
-    when: "Fri 11 Sep · 18:40 HKT",
+    when: "Fri 11 Sep · 16:40 HKT",
     kind: "subscribe",
     amount: 50_000_000,
     start: { cash: 62_400_000, units: 0 },
-    clockStart: { h: 18, m: 40, label: "Fri 11 Sep" },
+    clockStart: { h: 16, m: 40, label: "Fri 11 Sep" },
     stages: subscribeStages(50_000_000),
     exception: true,
     failAt: "assetreserve",
@@ -276,7 +276,7 @@ export function FundDemo() {
               </p>
               <p className="mt-1 text-[12.5px] leading-relaxed text-charcoal-900">
                 {sc.kind === "subscribe"
-                  ? "Settled and confirmed tonight — nothing left pending for Monday. Yield starts on the next business day, when the fund can invest the cash, and the units can be redeemed at any hour."
+                  ? "Settled before the 17:00 cut-off, so your units earn the fund's yield over the weekend. You can still redeem them at any hour — including Sunday night."
                   : "Proceeds arrived on Sunday night and can be swept straight to Singapore for Monday's payroll — which is Demo 2. The other 30,000,000 units stay invested."}
               </p>
             </div>

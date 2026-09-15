@@ -64,9 +64,10 @@ export default function Page() {
             </h2>
             <p className="mt-3 text-[14.5px] leading-relaxed text-ink-700">
               Money-market funds deal only on business days, so treasurers keep a precautionary buffer in plain deposits in case
-              cash is needed when the fund is shut. Party A Holdings keeps its US$50m buffer in a tokenised share class instead. At
-              23:10 on a Sunday, Singapore&apos;s Monday payroll needs US$20m: the treasurer redeems units into tokenised deposits
-              in seconds, as a single exchange of units for cash, and the rest stays invested.
+              cash is needed when the fund is shut. Party A Holdings puts its US$50m buffer in a tokenised share class instead: at 16:40
+              on Friday, before the 17:00 cut-off, it invests with tokenised deposits and the units earn the weekend&apos;s yield. At
+              23:10 on Sunday, Singapore&apos;s Monday payroll needs US$20m — the treasurer redeems units into tokenised deposits in
+              seconds, as a single exchange of units for cash, and the rest stays invested.
             </p>
             <div className="mt-4 inline-flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-paper-200 bg-paper-0 px-4 py-3">
               <span className="text-[24px] font-semibold tabular-nums tracking-tight text-charcoal-900">≈ US$16k</span>
