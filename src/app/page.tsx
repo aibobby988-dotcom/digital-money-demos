@@ -205,30 +205,6 @@ export default function Page() {
             </div>
           </div>
         </section>
-
-        {/* FRONT END NEVER IDLE */}
-        <section className="rounded-2xl border border-charcoal-800 bg-charcoal-950 p-6 sm:p-8">
-          <p className="text-[12px] font-semibold uppercase tracking-wider text-brand-400">Design principle</p>
-          <h2 className="mt-2 text-[22px] font-semibold tracking-tight text-paper-0">Why the client screen is never idle while the bank works</h2>
-          <p className="mt-2 max-w-3xl text-[14px] leading-relaxed text-paper-200">
-            A frozen screen during a multi-million-dollar movement is where client trust breaks — it is when people refresh, retry
-            and create duplicate instructions. So the front end follows five rules.
-          </p>
-          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            {[
-              ["Roll stages into milestones", "Ten backend stages become five client milestones. The client needs progress, not our architecture."],
-              ["Always show where the money is", "Held for settlement, reserved, incoming, released — the one thing a treasurer needs mid-flight."],
-              ["Never name the control that fired", "A held payment says “under review” or “one more registration step”. Disclosing a sanctions or AML hit can itself be unlawful tipping-off."],
-              ["Keep something moving", "A live timer, a progress bar and one plain sentence for the current step, so waiting never looks like failure."],
-              ["End with the money status", "Every outcome states it explicitly — including “no money moved” — so nobody has to call to find out."],
-            ].map(([t, b]) => (
-              <div key={t} className="rounded-xl border border-charcoal-700 bg-charcoal-900 p-4">
-                <p className="text-[13.5px] font-semibold text-paper-0">{t}</p>
-                <p className="mt-1.5 text-[12.5px] leading-relaxed text-paper-200">{b}</p>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
 
       <footer className="border-t border-paper-200 bg-paper-0">
