@@ -1,7 +1,6 @@
 import { ArrowDown, ArrowUpRight, Eye, Layers, Server, TriangleAlert } from "lucide-react";
 import { FundDemo } from "@/components/demo/FundDemo";
 import { PoolingDemo } from "@/components/demo/PoolingDemo";
-import { cn } from "@/lib/utils";
 
 function Source({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -11,33 +10,6 @@ function Source({ href, children }: { href: string; children: React.ReactNode })
     </a>
   );
 }
-
-const productSweep = [
-  {
-    product: "HSBC Orion digital bonds",
-    fit: "Bond units against cash",
-    verdict: "Already proven — settled against tokenised deposits in the HKMA Ensemble sandbox, August 2024.",
-    chosen: false,
-  },
-  {
-    product: "HSBC Gold Token",
-    fit: "Allocated gold against cash",
-    verdict: "Real and live, but built on Orion technology and led by retail and investor demand rather than corporate treasury.",
-    chosen: false,
-  },
-  {
-    product: "Trade documents — electronic bills of lading",
-    fit: "Title to goods against cash",
-    verdict: "Dramatic, but settlement via tokenised deposits was already tested in the Ensemble sandbox in 2024, and it depends on external document platforms.",
-    chosen: false,
-  },
-  {
-    product: "HSBC money-market funds — tokenised share class",
-    fit: "Fund units against cash",
-    verdict: "Every corporate treasurer parks surplus cash in money-market funds, the pain recurs every weekend, and it can be delivered entirely inside HSBC: Asset Management runs the fund, Securities Services keeps the register, GPS provides the payment side.",
-    chosen: true,
-  },
-];
 
 export default function Page() {
   return (
@@ -54,7 +26,7 @@ export default function Page() {
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <a href="#demo-1" className="group rounded-xl border border-charcoal-700 bg-charcoal-900 p-4 hover:border-brand-500">
               <p className="text-[12px] font-semibold text-brand-400">Demo 1 · Cash to asset</p>
-              <p className="mt-1 text-[15px] font-semibold text-paper-0">Subscribe and redeem an HSBC money-market fund with tokenised deposits</p>
+              <p className="mt-1 text-[15px] font-semibold text-paper-0">Keep the cash buffer invested, get it back at any hour</p>
               <p className="mt-1 flex items-center gap-1 text-[12.5px] text-ink-400 group-hover:text-paper-200">Delivery-versus-payment, 24/7 <ArrowDown size={12} /></p>
             </a>
             <a href="#demo-2" className="group rounded-xl border border-charcoal-700 bg-charcoal-900 p-4 hover:border-brand-500">
@@ -88,48 +60,20 @@ export default function Page() {
           <div className="max-w-4xl">
             <p className="text-[12px] font-semibold uppercase tracking-wider text-brand-600">Demo 1 · Cash to asset</p>
             <h2 className="mt-2 text-[26px] font-semibold tracking-tight text-charcoal-900">
-              A treasurer&apos;s idle cash, invested on a Friday night and back in time for Monday&apos;s payroll
+              Keep the cash buffer invested, get it back at any hour
             </h2>
             <p className="mt-3 text-[14.5px] leading-relaxed text-ink-700">
-              At 18:40 on a Friday, Party A&apos;s Hong Kong treasury has US$50m that will sit idle all weekend. Today the fund&apos;s
-              dealing cut-off has passed, so the cash earns nothing until Monday. With a tokenised share class settled against
-              tokenised deposits, the order settles in seconds as a single exchange of cash for units — and on Sunday night the
-              treasurer can redeem to fund Singapore&apos;s payroll before Asia opens.
+              Money-market funds deal only on business days, so treasurers keep a precautionary buffer in plain deposits in case
+              cash is needed when the fund is shut. Party A Holdings keeps its US$50m buffer in a tokenised share class instead. At
+              23:10 on a Sunday, Singapore&apos;s Monday payroll needs US$20m: the treasurer redeems units into tokenised deposits
+              in seconds, as a single exchange of units for cash, and the rest stays invested.
             </p>
             <div className="mt-4 inline-flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-paper-200 bg-paper-0 px-4 py-3">
               <span className="text-[24px] font-semibold tabular-nums tracking-tight text-charcoal-900">≈ US$16k</span>
-              <span className="text-[13.5px] text-ink-700">of yield missed per weekend when US$50m misses Friday&apos;s cut-off, at a 4% yield</span>
+              <span className="text-[13.5px] text-ink-700">per weekend earned by keeping a US$50m buffer invested instead of idle, at a 4% yield</span>
               <span className="w-full text-[11.5px] text-ink-400">
-                Illustrative: US$50,000,000 × 4% × 3 days (Fri–Mon) ÷ 365 = US$16,438. Money-market funds accrue interest on calendar days, so weekend yield goes to units held at Friday&apos;s cut-off.
+                Illustrative: US$50,000,000 × 4% × 3 days (Fri–Mon) ÷ 365 = US$16,438, against a buffer earning close to nothing. Funds accrue interest on calendar days, so units already held at Friday&apos;s cut-off earn the weekend — round-the-clock redemption is what makes it safe to hold them. Subscribing at the weekend adds no yield: it starts on the next business day.
               </span>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-paper-200 bg-paper-0 p-5">
-            <p className="text-[14px] font-semibold text-charcoal-900">Which HSBC product — and why not Orion</p>
-            <p className="mt-1 text-[13px] text-ink-500">A sweep of HSBC assets that could settle against the tokenised payment side.</p>
-            <div className="mt-3 overflow-x-auto">
-              <table className="w-full min-w-[720px] border-collapse text-left">
-                <thead>
-                  <tr className="border-b border-paper-200 text-[11.5px] uppercase tracking-wide text-ink-400">
-                    <th className="py-2 pr-4 font-medium">HSBC asset</th>
-                    <th className="py-2 pr-4 font-medium">Exchange</th>
-                    <th className="py-2 font-medium">Assessment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {productSweep.map((p) => (
-                    <tr key={p.product} className={cn("border-b border-paper-100 text-[13px] last:border-0", p.chosen && "bg-brand-50")}>
-                      <td className="py-3 pr-4 font-semibold text-charcoal-900">
-                        {p.product}
-                        {p.chosen && <span className="ml-2 rounded-full bg-brand-500 px-2 py-0.5 text-[10.5px] font-semibold text-paper-0">Chosen</span>}
-                      </td>
-                      <td className="py-3 pr-4 text-ink-700">{p.fit}</td>
-                      <td className="py-3 leading-relaxed text-ink-700">{p.verdict}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
 
@@ -180,6 +124,7 @@ export default function Page() {
                 <li><strong className="font-semibold text-charcoal-900">The fund, not the rail, sets the clock.</strong> Out-of-hours dealing needs a share class whose terms and pricing allow it, approved by the fund regulator.</li>
                 <li><strong className="font-semibold text-charcoal-900">The register must run 24/7</strong> — transfer agency operations and exception handling included.</li>
                 <li><strong className="font-semibold text-charcoal-900">Legal finality of the exchange</strong> has to be confirmed per jurisdiction, not assumed from atomic settlement.</li>
+                <li><strong className="font-semibold text-charcoal-900">Who pays out while markets are shut.</strong> Weekend redemptions come from the fund&apos;s cash buffer, sized to expected demand. Beyond it, the realistic fallback is an HSBC loan to the investor secured on its units — many markets restrict a bank from propping up its own fund.</li>
                 <li><strong className="font-semibold text-charcoal-900">Fund liquidity rules</strong> — redemption limits, gates and fees — must be enforced in the flow, not after it.</li>
               </ul>
             </div>

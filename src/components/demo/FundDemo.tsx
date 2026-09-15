@@ -15,6 +15,7 @@ const systems: SystemDef[] = [
   { id: "entitle", name: "Entitlements & approvals", owner: "Controls", role: "Who may deal, mandate limits, maker-checker" },
   { id: "screen", name: "Financial crime screening", owner: "Controls", role: "Sanctions, AML and PEP checks before value moves" },
   { id: "oms", name: "Fund order management", owner: "HSBC Asset Management", role: "Investor eligibility, dealing rules, concentration limits" },
+  { id: "buffer", name: "Fund cash buffer", owner: "HSBC Asset Management", role: "Tokenised deposits the fund holds to pay redemptions while markets are shut" },
   { id: "nav", name: "NAV & pricing", owner: "HSBC Asset Management", role: "Strikes the unit price the order settles at" },
   { id: "registry", name: "Transfer agent & unit register", owner: "HSBC Securities Services", role: "Issues, reserves and cancels fund units — the fund side" },
   { id: "tds", name: "TDS ledger", owner: "GPS · Digital Money", role: "Tokenised deposits: escrow and transfer — the payment side" },
@@ -26,7 +27,7 @@ const systems: SystemDef[] = [
 const groups = [
   { owner: "Client channel", ids: ["channel", "reporting"] },
   { owner: "Controls", ids: ["entitle", "screen"] },
-  { owner: "HSBC Asset Management", ids: ["oms", "nav"] },
+  { owner: "HSBC Asset Management", ids: ["oms", "buffer", "nav"] },
   { owner: "HSBC Securities Services", ids: ["registry"] },
   { owner: "GPS · Digital Money", ids: ["tds", "settle"] },
   { owner: "Books of record", ids: ["core", "recon"] },
@@ -60,10 +61,11 @@ function redeemStages(amount: number): StageDef[] {
     { id: "instruct", label: "Instruction received", systemIds: ["channel"], milestone: 0, detail: `Redeem ${units(amount)} tokenised units; request signed with the client's certificate`, clientSays: "We have your redemption and are validating it." },
     { id: "entitle", shape: "decision", label: "Entitlements & maker-checker", systemIds: ["entitle"], milestone: 1, detail: "Maker TRS-014 and checker TRS-031 authorised", clientSays: "Confirming the people and limits on your mandate." },
     { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Redeeming entity and destination wallet screened — clear", clientSays: "Running standard security and compliance checks." },
-    { id: "dealing", shape: "decision", label: "Dealing rules & fund liquidity", systemIds: ["oms"], milestone: 2, detail: "Redemption within the fund's daily liquidity buffer; no gate or fee triggered", clientSays: "Checking the fund's rules for this redemption." },
+    { id: "dealing", shape: "decision", label: "Dealing rules & redemption limits", systemIds: ["oms"], milestone: 2, detail: "Within the share class's out-of-hours redemption limit; no gate or fee triggered", clientSays: "Checking the fund's rules for this redemption." },
+    { id: "liquidity", shape: "decision", label: "Out-of-hours cash sourced", systemIds: ["buffer"], milestone: 2, detail: `Markets are shut, so the fund cannot sell assets until Monday. ${usd(amount)} is paid from its tokenised-deposit cash buffer (US$240,000,000 available); the assets behind it are sold when markets reopen`, clientSays: "Confirming the cash is available now." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `US$1.0000 per unit → proceeds ${usd(amount)}`, clientSays: `Proceeds confirmed: ${usd(amount)}.` },
     { id: "assetlock", label: "Fund side locked in escrow", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units moved to settlement escrow in the register`, clientSays: "Your units are held for settlement." },
-    { id: "cashreserve", label: "Payment side reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of the fund's tokenised deposits reserved for payment`, clientSays: "Reserving your proceeds." },
+    { id: "cashreserve", label: "Payment side reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of the fund's buffer reserved for payment`, clientSays: "Reserving your proceeds." },
     { id: "commit", shape: "commit", joinsFrom: ["assetlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: units cancelled and cash paid to the investor's wallet — both sides or neither", clientSays: "Exchanging units for cash in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the redemption in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; proceeds available to sweep immediately", clientSays: "Sending your confirmation." },
@@ -82,18 +84,6 @@ interface FundScenario extends Scenario {
 
 const scenarios: FundScenario[] = [
   {
-    key: "subscribe",
-    title: "Friday evening — put idle cash to work",
-    when: "Fri 11 Sep · 18:40 HKT",
-    kind: "subscribe",
-    amount: 50_000_000,
-    start: { cash: 62_400_000, units: 0 },
-    clockStart: { h: 18, m: 40, label: "Fri 11 Sep" },
-    stages: subscribeStages(50_000_000),
-    conventional:
-      "Conventional share class: today's dealing cut-off has passed, so the order deals Monday at noon — about 2.7 days of yield missed, roughly US$13,000 on US$50m at an illustrative 3.5%.",
-  },
-  {
     key: "redeem",
     title: "Sunday night — raise cash for Monday payroll",
     when: "Sun 13 Sep · 23:10 HKT",
@@ -103,7 +93,19 @@ const scenarios: FundScenario[] = [
     clockStart: { h: 23, m: 10, label: "Sun 13 Sep" },
     stages: redeemStages(20_000_000),
     conventional:
-      "Conventional share class: a Sunday instruction waits for Monday's dealing cycle, so proceeds land after Asia's Monday-morning payroll has already needed them.",
+      "Conventional share class: a Sunday instruction waits for Monday's dealing cycle. So a treasurer who might need cash out of hours keeps a buffer like this US$50m as a low-yielding deposit instead — about US$16k of yield forgone per weekend at an illustrative 4%.",
+  },
+  {
+    key: "subscribe",
+    title: "Friday evening — invest after the cut-off",
+    when: "Fri 11 Sep · 18:40 HKT",
+    kind: "subscribe",
+    amount: 50_000_000,
+    start: { cash: 62_400_000, units: 0 },
+    clockStart: { h: 18, m: 40, label: "Fri 11 Sep" },
+    stages: subscribeStages(50_000_000),
+    conventional:
+      "Conventional share class: the order sits pending until Monday's dealing cycle. Settling tonight does not add weekend yield — the fund cannot invest until markets open — but the treasurer ends the week with the position done, not a Monday cut-off to chase.",
   },
   {
     key: "exception",
@@ -137,9 +139,9 @@ export function FundDemo() {
   const done = (id: string) => sc !== null && statuses[idx(id)] === "done";
   const reversed = reversalStatuses[0] === "reversed";
 
-  let cash = sc?.start.cash ?? 62_400_000;
+  let cash = sc?.start.cash ?? scenarios[0].start.cash;
   let held = 0;
-  let unitHolding = sc?.start.units ?? 0;
+  let unitHolding = sc?.start.units ?? scenarios[0].start.units;
   let pendingUnits = 0;
   if (sc) {
     if (sc.kind === "subscribe") {
@@ -274,8 +276,8 @@ export function FundDemo() {
               </p>
               <p className="mt-1 text-[12.5px] leading-relaxed text-charcoal-900">
                 {sc.kind === "subscribe"
-                  ? "Your cash started earning the fund's yield on Friday evening, not Monday. You can redeem at any time, including this weekend."
-                  : "Proceeds arrived on Sunday night and can be swept straight to Singapore for Monday's payroll — which is Demo 2."}
+                  ? "Settled and confirmed tonight — nothing left pending for Monday. Yield starts on the next business day, when the fund can invest the cash, and the units can be redeemed at any hour."
+                  : "Proceeds arrived on Sunday night and can be swept straight to Singapore for Monday's payroll — which is Demo 2. The other 30,000,000 units stay invested."}
               </p>
             </div>
           )}
