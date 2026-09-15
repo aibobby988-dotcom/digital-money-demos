@@ -60,7 +60,7 @@ export default function Page() {
             <a href="#demo-2" className="group rounded-xl border border-charcoal-700 bg-charcoal-900 p-4 hover:border-brand-500">
               <p className="text-[12px] font-semibold text-brand-400">Demo 2 · Cash to cash</p>
               <p className="mt-1 text-[15px] font-semibold text-paper-0">Automated cash pooling on the 24/7 rail</p>
-              <p className="mt-1 flex items-center gap-1 text-[12.5px] text-ink-400 group-hover:text-paper-200">Funding by policy, with a human for exceptions <ArrowDown size={12} /></p>
+              <p className="mt-1 flex items-center gap-1 text-[12.5px] text-ink-400 group-hover:text-paper-200">Enabling more AI automation capabilities for users <ArrowDown size={12} /></p>
             </a>
           </div>
         </div>
