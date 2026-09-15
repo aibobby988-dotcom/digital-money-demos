@@ -96,6 +96,13 @@ export default function Page() {
               tokenised deposits, the order settles in seconds as a single exchange of cash for units — and on Sunday night the
               treasurer can redeem to fund Singapore&apos;s payroll before Asia opens.
             </p>
+            <div className="mt-4 inline-flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-paper-200 bg-paper-0 px-4 py-3">
+              <span className="text-[24px] font-semibold tabular-nums tracking-tight text-charcoal-900">≈ US$16k</span>
+              <span className="text-[13.5px] text-ink-700">of yield missed per weekend when US$50m misses Friday&apos;s cut-off, at a 4% yield</span>
+              <span className="w-full text-[11.5px] text-ink-400">
+                Illustrative: US$50,000,000 × 4% × 3 days (Fri–Mon) ÷ 365 = US$16,438. Money-market funds accrue interest on calendar days, so weekend yield goes to units held at Friday&apos;s cut-off.
+              </span>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-paper-200 bg-paper-0 p-5">
