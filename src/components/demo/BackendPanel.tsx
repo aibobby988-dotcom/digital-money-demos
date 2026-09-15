@@ -19,7 +19,7 @@ const toneClass = {
   pass: "text-emerald-600",
   warn: "text-amber-500",
   fail: "text-rose-600",
-  settle: "text-brand-600 font-medium",
+  settle: "text-paper-0 font-semibold",
 };
 
 export function BackendPanel({
@@ -59,7 +59,7 @@ export function BackendPanel({
   const byId = Object.fromEntries(systems.map((s) => [s.id, s]));
 
   return (
-    <div className="flex h-full flex-col gap-3">
+    <div className="flex flex-col gap-3">
       <div>
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-paper-200">
           Systems this touches · illustrative integration map
@@ -86,7 +86,9 @@ export function BackendPanel({
                         st === "pending" && "border-charcoal-700 bg-charcoal-850"
                       )}
                     >
-                      <StatusIcon status={st} />
+                      <span className="shrink-0">
+                        <StatusIcon status={st} />
+                      </span>
                       <div className="min-w-0">
                         <p className="truncate text-[12px] font-medium text-paper-0">{sys.name}</p>
                         <p className="truncate text-[10.5px] text-ink-400">{sys.role}</p>
@@ -167,11 +169,11 @@ export function BackendPanel({
         </ol>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-charcoal-700 bg-charcoal-950">
+      <div className="flex flex-col overflow-hidden rounded-lg border border-charcoal-700 bg-charcoal-900">
         <p className="border-b border-charcoal-700 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-paper-200">
           Event log · immutable audit trail
         </p>
-        <ul ref={logRef} className="max-h-44 space-y-1 overflow-y-auto px-3 py-2 font-mono text-[11px] leading-relaxed">
+        <ul ref={logRef} className="max-h-56 space-y-1.5 overflow-y-auto px-3 py-2.5 font-mono text-[11px] leading-relaxed [scrollbar-color:#3a3f45_transparent]">
           {log.length === 0 && <li className="text-ink-400">Waiting for an instruction…</li>}
           {log.map((l, i) => (
             <li key={i} className="flex gap-2">
