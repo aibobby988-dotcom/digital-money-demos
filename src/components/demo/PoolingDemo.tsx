@@ -211,7 +211,7 @@ export function PoolingDemo() {
 
       <div hidden={tab !== "side"} className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
         {/* CLIENT SIDE */}
-        <div className="rounded-2xl border border-paper-200 bg-paper-50 p-4">
+        <div className="rounded-2xl border-2 border-brand-500 bg-paper-50 p-4 shadow-[0_0_0_4px_rgba(219,0,17,0.08)]">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-500">What the client sees</p>
             <Badge tone="neutral">HSBCnet · Liquidity console (mock)</Badge>
