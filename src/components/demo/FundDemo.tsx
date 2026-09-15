@@ -1,10 +1,12 @@
 "use client";
 
-import { ArrowDownLeft, ArrowUpRight, Clock, Pause, Play, RotateCcw, ShieldCheck, TriangleAlert } from "lucide-react";
+import { Columns2, ArrowDownLeft, ArrowUpRight, Clock, Pause, Play, RotateCcw, ShieldCheck, TriangleAlert, Workflow } from "lucide-react";
 import { Badge } from "@/components/Badge";
 import { cn, units, usd } from "@/lib/utils";
 import { BackendPanel } from "./BackendPanel";
+import { FlowChart } from "./FlowChart";
 import { ClientProgress } from "./ClientProgress";
+import { useState } from "react";
 import { useStageRunner, type Scenario, type StageDef, type SystemDef } from "./useStageRunner";
 
 const systems: SystemDef[] = [
@@ -41,13 +43,13 @@ const milestones = [
 function subscribeStages(amount: number): StageDef[] {
   return [
     { id: "instruct", label: "Instruction received", systemIds: ["channel"], milestone: 0, detail: `Subscribe ${usd(amount)} into the tokenised share class; request signed with the client's certificate`, clientSays: "We have your order and are validating it." },
-    { id: "entitle", label: "Entitlements & maker-checker", systemIds: ["entitle"], milestone: 1, detail: "Maker TRS-014 and checker TRS-022 authorised; within the US$75m investment mandate", clientSays: "Confirming the people and limits on your mandate." },
-    { id: "screen", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Investing entity, fund and counterparties screened — clear", clientSays: "Running standard security and compliance checks." },
-    { id: "eligibility", label: "Investor eligibility & dealing rules", systemIds: ["oms"], milestone: 2, detail: "Professional-investor class; within per-investor concentration limit; class permits 24/7 dealing", clientSays: "Checking the fund's rules for this order." },
+    { id: "entitle", shape: "decision", label: "Entitlements & maker-checker", systemIds: ["entitle"], milestone: 1, detail: "Maker TRS-014 and checker TRS-022 authorised; within the US$75m investment mandate", clientSays: "Confirming the people and limits on your mandate." },
+    { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Investing entity, fund and counterparties screened — clear", clientSays: "Running standard security and compliance checks." },
+    { id: "eligibility", shape: "decision", label: "Investor eligibility & dealing rules", systemIds: ["oms"], milestone: 2, detail: "Professional-investor class; within per-investor concentration limit; class permits 24/7 dealing", clientSays: "Checking the fund's rules for this order." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `Constant-NAV class at US$1.0000 per unit → ${units(amount)} units`, clientSays: `Price confirmed: ${units(amount)} units at US$1.0000.` },
     { id: "cashlock", label: "Cash leg locked in escrow", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of tokenised deposits moved to settlement escrow — not yet released to the fund`, clientSays: `${usd(amount)} is held for settlement. It stays yours until the units are ready.` },
     { id: "assetreserve", label: "Asset leg reserved in register", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units reserved for issue to Meridian Holdings (HK)`, clientSays: "Reserving your fund units." },
-    { id: "commit", label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: cash released to the fund's account and units issued to the investor — both legs or neither", clientSays: "Exchanging cash for units in a single step." },
+    { id: "commit", shape: "commit", joinsFrom: ["cashlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: cash released to the fund's account and units issued to the investor — both legs or neither", clientSays: "Exchanging cash for units in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the trade in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; ERP updated by API callback", clientSays: "Sending your confirmation." },
   ];
@@ -56,13 +58,13 @@ function subscribeStages(amount: number): StageDef[] {
 function redeemStages(amount: number): StageDef[] {
   return [
     { id: "instruct", label: "Instruction received", systemIds: ["channel"], milestone: 0, detail: `Redeem ${units(amount)} tokenised units; request signed with the client's certificate`, clientSays: "We have your redemption and are validating it." },
-    { id: "entitle", label: "Entitlements & maker-checker", systemIds: ["entitle"], milestone: 1, detail: "Maker TRS-014 and checker TRS-031 authorised", clientSays: "Confirming the people and limits on your mandate." },
-    { id: "screen", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Redeeming entity and destination wallet screened — clear", clientSays: "Running standard security and compliance checks." },
-    { id: "dealing", label: "Dealing rules & fund liquidity", systemIds: ["oms"], milestone: 2, detail: "Redemption within the fund's daily liquidity buffer; no gate or fee triggered", clientSays: "Checking the fund's rules for this redemption." },
+    { id: "entitle", shape: "decision", label: "Entitlements & maker-checker", systemIds: ["entitle"], milestone: 1, detail: "Maker TRS-014 and checker TRS-031 authorised", clientSays: "Confirming the people and limits on your mandate." },
+    { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 1, detail: "Redeeming entity and destination wallet screened — clear", clientSays: "Running standard security and compliance checks." },
+    { id: "dealing", shape: "decision", label: "Dealing rules & fund liquidity", systemIds: ["oms"], milestone: 2, detail: "Redemption within the fund's daily liquidity buffer; no gate or fee triggered", clientSays: "Checking the fund's rules for this redemption." },
     { id: "price", label: "Price struck", systemIds: ["nav"], milestone: 2, detail: `US$1.0000 per unit → proceeds ${usd(amount)}`, clientSays: `Proceeds confirmed: ${usd(amount)}.` },
     { id: "assetlock", label: "Asset leg locked in escrow", systemIds: ["registry"], milestone: 3, detail: `${units(amount)} units moved to settlement escrow in the register`, clientSays: "Your units are held for settlement." },
     { id: "cashreserve", label: "Cash leg reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(amount)} of the fund's tokenised deposits reserved for payment`, clientSays: "Reserving your proceeds." },
-    { id: "commit", label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: units cancelled and cash paid to the investor's wallet — both legs or neither", clientSays: "Exchanging units for cash in a single step." },
+    { id: "commit", shape: "commit", joinsFrom: ["assetlock"], label: "Atomic DvP commit", systemIds: ["settle", "tds", "registry"], milestone: 3, ms: 1300, detail: "One transaction: units cancelled and cash paid to the investor's wallet — both legs or neither", clientSays: "Exchanging units for cash in a single step." },
     { id: "post", label: "Posting & reconciliation", systemIds: ["core", "recon"], milestone: 4, detail: "Core banking, general ledger and unit register agree; audit record sealed", clientSays: "Recording the redemption in your accounts." },
     { id: "confirm", label: "Confirmation & reporting", systemIds: ["reporting"], milestone: 4, detail: "Contract note issued; proceeds available to sweep immediately", clientSays: "Sending your confirmation." },
   ];
@@ -127,6 +129,7 @@ const scenarios: FundScenario[] = [
 
 export function FundDemo() {
   const runner = useStageRunner();
+  const [tab, setTab] = useState<"side" | "flow">("side");
   const { scenario, statuses, reversalStatuses, phase, paused, clock } = runner;
   const sc = scenario as FundScenario | null;
 
@@ -191,7 +194,31 @@ export function FundDemo() {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+      <div role="tablist" aria-label="Demo view" className="inline-flex rounded-lg border border-paper-200 bg-paper-50 p-1">
+        {([
+          ["side", "Side-by-side view"],
+          ["flow", "Flow chart"],
+        ] as const).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => setTab(key)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors",
+              tab === key ? "bg-paper-0 text-charcoal-900 shadow-sm" : "text-ink-500 hover:text-charcoal-900"
+            )}
+          >
+            {key === "side" ? <Columns2 size={13} /> : <Workflow size={13} />}
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "flow" && <FlowChart runner={runner} lanes={groups} systems={systems} fallback={scenarios[0]} />}
+
+      <div hidden={tab !== "side"} className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
         {/* CLIENT SIDE */}
         <div className="rounded-2xl border border-paper-200 bg-paper-50 p-4">
           <div className="mb-3 flex items-center justify-between">

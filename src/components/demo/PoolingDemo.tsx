@@ -1,10 +1,12 @@
 "use client";
 
-import { Bell, Check, Clock, Pause, Play, RotateCcw, ShieldCheck, TriangleAlert, X, Zap } from "lucide-react";
+import { Columns2, Bell, Check, Clock, Pause, Play, RotateCcw, ShieldCheck, TriangleAlert, X, Zap, Workflow } from "lucide-react";
 import { Badge } from "@/components/Badge";
 import { cn, usd } from "@/lib/utils";
 import { BackendPanel } from "./BackendPanel";
+import { FlowChart } from "./FlowChart";
 import { ClientProgress } from "./ClientProgress";
+import { useState } from "react";
 import { useStageRunner, type Scenario, type StageDef, type SystemDef } from "./useStageRunner";
 
 const systems: SystemDef[] = [
@@ -50,12 +52,12 @@ function stages(o: {
 }): StageDef[] {
   return [
     { id: "detect", label: "Balance change detected", systemIds: ["position"], milestone: 0, detail: `${o.cause} — ${o.entity} now ${usd(o.lowBalance)}`, clientSays: `${o.entity}'s balance just dropped below your ${usd(POLICY.floor)} floor.` },
-    { id: "policy", label: "Policy evaluated", systemIds: ["policy"], milestone: 0, detail: `Floor breached → top up to ${usd(POLICY.target)} → requirement ${usd(o.amount)} from the Hong Kong hub`, clientSays: `Your pooling policy says: top ${o.entity} up to ${usd(POLICY.target)}.` },
-    { id: "eligibility", label: "Entity & corridor eligibility", systemIds: ["entitle"], milestone: 1, detail: `${o.entity} is an approved group entity; HK→${o.code} corridor approved with a settlement-finality opinion on file`, clientSays: `Checking ${o.entity} is an approved destination.` },
-    { id: "limits", label: "Limits & caps", systemIds: ["limits"], milestone: 1, detail: o.limitsDetail, clientSays: "Checking this stays inside the limits you set." },
-    { id: "screen", label: "Financial crime screening", systemIds: ["screen"], milestone: 2, detail: "Intra-group transfer screened — clear", clientSays: "Running standard compliance checks." },
+    { id: "policy", shape: "decision", label: "Policy evaluated", systemIds: ["policy"], milestone: 0, detail: `Floor breached → top up to ${usd(POLICY.target)} → requirement ${usd(o.amount)} from the Hong Kong hub`, clientSays: `Your pooling policy says: top ${o.entity} up to ${usd(POLICY.target)}.` },
+    { id: "eligibility", shape: "decision", label: "Entity & corridor eligibility", systemIds: ["entitle"], milestone: 1, detail: `${o.entity} is an approved group entity; HK→${o.code} corridor approved with a settlement-finality opinion on file`, clientSays: `Checking ${o.entity} is an approved destination.` },
+    { id: "limits", shape: "decision", label: "Limits & caps", systemIds: ["limits"], milestone: 1, detail: o.limitsDetail, clientSays: "Checking this stays inside the limits you set." },
+    { id: "screen", shape: "decision", label: "Financial crime screening", systemIds: ["screen"], milestone: 2, detail: "Intra-group transfer screened — clear", clientSays: "Running standard compliance checks." },
     { id: "reserve", label: "Hub funds reserved", systemIds: ["tds"], milestone: 3, detail: `${usd(o.amount)} reserved on the Hong Kong hub wallet`, clientSays: `Reserving ${usd(o.amount)} in Hong Kong.` },
-    { id: "transfer", label: "Atomic transfer", systemIds: ["tds", "policy"], milestone: 3, ms: 1200, detail: `Debit Hong Kong and credit ${o.entity} in one transaction — both or neither`, clientSays: `Moving the funds to ${o.entity}.` },
+    { id: "transfer", shape: "commit", label: "Atomic transfer", systemIds: ["tds", "policy"], milestone: 3, ms: 1200, detail: `Debit Hong Kong and credit ${o.entity} in one transaction — both or neither`, clientSays: `Moving the funds to ${o.entity}.` },
     { id: "post", label: "Core posting & intercompany position", systemIds: ["core", "pooling"], milestone: 4, detail: `Accounts posted; intercompany loan HK→${o.code} ${usd(o.amount)} recorded for interest allocation`, clientSays: "Recording the intercompany position." },
     { id: "recon", label: "Reconciliation & audit", systemIds: ["core", "cases"], milestone: 4, detail: "TDS ledger, core banking and pooling records agree; decision trail sealed", clientSays: "Double-checking every record matches." },
     { id: "notify", label: "Treasury notified", systemIds: ["tms", "console"], milestone: 4, detail: `Position pushed to the client's TMS by API; added to the overnight sweep report (today: ${usd(o.sweptBefore + o.amount)} swept)`, clientSays: "Updating your treasury system." },
@@ -122,6 +124,7 @@ const scenarios: PoolScenario[] = [
 
 export function PoolingDemo() {
   const runner = useStageRunner();
+  const [tab, setTab] = useState<"side" | "flow">("side");
   const { scenario, statuses, phase, paused, clock } = runner;
   const sc = scenario as PoolScenario | null;
   const done = (id: string) => (sc ? statuses[sc.stages.findIndex((s) => s.id === id)] === "done" : false);
@@ -182,7 +185,31 @@ export function PoolingDemo() {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+      <div role="tablist" aria-label="Demo view" className="inline-flex rounded-lg border border-paper-200 bg-paper-50 p-1">
+        {([
+          ["side", "Side-by-side view"],
+          ["flow", "Flow chart"],
+        ] as const).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => setTab(key)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors",
+              tab === key ? "bg-paper-0 text-charcoal-900 shadow-sm" : "text-ink-500 hover:text-charcoal-900"
+            )}
+          >
+            {key === "side" ? <Columns2 size={13} /> : <Workflow size={13} />}
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "flow" && <FlowChart runner={runner} lanes={groups} systems={systems} fallback={scenarios[0]} />}
+
+      <div hidden={tab !== "side"} className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
         {/* CLIENT SIDE */}
         <div className="rounded-2xl border border-paper-200 bg-paper-50 p-4">
           <div className="mb-3 flex items-center justify-between">

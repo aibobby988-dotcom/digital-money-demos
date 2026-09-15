@@ -146,3 +146,18 @@ body {
     break-inside: avoid;
   }
 }
+
+/* Flow chart: dashes travel along the edge that is carrying work right now. */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -22;
+  }
+}
+.flow-dash {
+  animation: flow-dash 0.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-dash {
+    animation: none;
+  }
+}
